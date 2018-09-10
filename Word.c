@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <memory.h>
 #include "Word.h"
 
 const int g = 64;
