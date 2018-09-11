@@ -16,6 +16,8 @@ static int C;
 static int F1;
 static int M1;
 static int I;
+static int boolHLT;
+
 
 static Word TapeUnits[8][100];
 static Word DiskOrDrumUnits[8][100];
@@ -659,7 +661,7 @@ void NUM() {
 const int row() {
     FILE *fp;
     int flag = 0, file_row = 0, count = 0;
-    if ((fp = fopen("./input.txt", "r")) == NULL)
+    if ((fp = fopen("input.txt", "r")) == NULL)
         return -1;
     while (!feof(fp)) {
         flag = fgetc(fp);
@@ -680,7 +682,7 @@ void read() {
     char szTest[50] = {0};
     int len = 0;
 
-    FILE *fp = fopen("./input.txt", "r");
+    FILE *fp = fopen("input.txt", "r");
     if (NULL == fp) {
         printf("failed to open txt\n");
         return;
@@ -843,8 +845,15 @@ void carryOut() {
                 SRC(M1);
                 break;
         }
+    } else if (C == 0) {
+        boolHLT = 1;
+    } else if (C == 36) {
+        IN(M1, F1);
+    } else if (C == 37) {
+        OUT(M1, F1);
     }
     current++;
+
 }
 
 void run() {
@@ -1189,10 +1198,10 @@ void run() {
     }
 
 
-    char address[4];
+    char address[6];
     st1 = strtok(NULL, ",");
-    strcpy(address, st1);
     if (st1 != NULL) {
+        strcpy(address, st1);
         M1 = 0;
         for (int j = 0; j < 10; ++j) {
             if (address[0] == allNum[j]) {
@@ -1220,10 +1229,11 @@ void run() {
         }
     }
 
-    char I1[2];
+    char I1[4];
     st1 = strtok(NULL, "(");
-    strcpy(I1, st1);
+
     if (st1 != NULL) {
+        strcpy(I1, st1);
         I = 0;
         for (int j = 0; j < 10; ++j) {
             if (I1[0] == allNum[j]) {
@@ -1241,10 +1251,11 @@ void run() {
 
     int FL = -1;
     int FR = -1;
-    char FLR[4];
+    char FLR[6];
     st1 = strtok(NULL, "(");
-    strcpy(FLR, st1);
+
     if (st1 != NULL) {
+        strcpy(FLR, st1);
         for (int i = 0; i < 10; ++i) {
             if (FLR[0] == allNum[i]) {
                 FL = i;
@@ -1252,7 +1263,7 @@ void run() {
             }
         }
         for (int i = 0; i < 10; ++i) {
-            if (st[2] == allNum[i]) {
+            if (FLR[2] == allNum[i]) {
                 FR = i;
                 break;
             }
@@ -1267,9 +1278,11 @@ void run() {
 
 
 int main(void) {
-    Word a;
-    a = getWord(87);
-    a = getPartOfWord(a, 3);
-    printf("%d", a.a[3]);
+
     read();
+    while (boolHLT == 0) {
+        run();
+        carryOut();
+
+    }
 }
