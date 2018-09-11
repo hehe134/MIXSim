@@ -15,6 +15,7 @@ static int current;
 static int C;
 static int F1;
 static int M1;
+static int I;
 
 static Word TapeUnits[8][100];
 static Word DiskOrDrumUnits[8][100];
@@ -843,6 +844,7 @@ void carryOut() {
                 break;
         }
     }
+    current++;
 }
 
 void run() {
@@ -850,7 +852,7 @@ void run() {
     F1 = -1;
     st1 = strtok(command[current], " ");
     char st[6];
-    strcpy(st,st1);
+    strcpy(st, st1);
     if (strcmp(st, "LDA") == 0) {
         C = 8;
     } else if (strcmp(st, "LD1") == 0) {
@@ -1035,47 +1037,230 @@ void run() {
         } else if (st[3] == '6') {
             C = 62;
         }
-    } else if(st[0]=='J'){
-        if (st[2]=='P'){
-            C=39;
-            F1=0;
-        } else if (st[2]=='J'){
-            C=39;
-            F1=1;
-        } else if (st[2]=='V'){
-            C=39;
-            F1=2;
+    } else if (st[0] == 'J') {
+        if (st[2] == 'P') {
+            C = 39;
+            F1 = 0;
+        } else if (st[2] == 'J') {
+            C = 39;
+            F1 = 1;
+        } else if (st[2] == 'V') {
+            C = 39;
+            F1 = 2;
+        } else if (st[1] == 'N' && st[2] == 'O') {
+            C = 39;
+            F1 = 3;
+        } else if (strcmp(st, "JL") == 0) {
+            C = 39;
+            F1 = 4;
+        } else if (strcmp(st, "JE") == 0) {
+            C = 39;
+            F1 = 5;
+        } else if (strcmp(st, "JG") == 0) {
+            C = 39;
+            F1 = 6;
+        } else if (strcmp(st, "JGE") == 0) {
+            C = 39;
+            F1 = 7;
+        } else if (strcmp(st, "JNE") == 0) {
+            C = 39;
+            F1 = 8;
+        } else if (strcmp(st, "JLE") == 0) {
+            C = 39;
+            F1 = 9;
+        } else if (strcmp(st, "JAN") == 0) {
+            C = 40;
+            F1 = 0;
+        } else if (strcmp(st, "JAZ") == 0) {
+            C = 40;
+            F1 = 1;
+        } else if (strcmp(st, "JAP") == 0) {
+            C = 40;
+            F1 = 2;
+        } else if (strcmp(st, "JANN") == 0) {
+            C = 40;
+            F1 = 3;
+        } else if (strcmp(st, "JANZ") == 0) {
+            C = 40;
+            F1 = 4;
+        } else if (strcmp(st, "JANP") == 0) {
+            C = 40;
+            F1 = 5;
+        } else if (strcmp(st, "JXN") == 0) {
+            C = 47;
+            F1 = 0;
+        } else if (strcmp(st, "JXZ") == 0) {
+            C = 47;
+            F1 = 1;
+        } else if (strcmp(st, "JXP") == 0) {
+            C = 47;
+            F1 = 2;
+        } else if (strcmp(st, "JXNN") == 0) {
+            C = 47;
+            F1 = 3;
+        } else if (strcmp(st, "JXNZ") == 0) {
+            C = 47;
+            F1 = 4;
+        } else if (strcmp(st, "JXNP") == 0) {
+            C = 47;
+            F1 = 5;
+        } else if (st[2] == 'N' && st[3] == NULL) {
+            for (int i = 1; i < 7; i++) {
+                if (st[1] == allNum[i]) {
+                    C = 40 + i;
+                    F1 = 0;
+                    break;
+                }
+            }
+        } else if (st[2] == 'Z' && st[3] == NULL) {
+            for (int i = 1; i < 7; i++) {
+                if (st[1] == allNum[i]) {
+                    C = 40 + i;
+                    F1 = 1;
+                    break;
+                }
+            }
+        } else if (st[2] == 'P' && st[3] == NULL) {
+            for (int i = 1; i < 7; i++) {
+                if (st[1] == allNum[i]) {
+                    C = 40 + i;
+                    F1 = 2;
+                    break;
+                }
+            }
+        } else if (st[2] == 'N' && st[3] == 'N') {
+            for (int i = 1; i < 7; i++) {
+                if (st[1] == allNum[i]) {
+                    C = 40 + i;
+                    F1 = 3;
+                    break;
+                }
+            }
+        } else if (st[2] == 'N' && st[3] == 'Z') {
+            for (int i = 1; i < 7; i++) {
+                if (st[1] == allNum[i]) {
+                    C = 40 + i;
+                    F1 = 4;
+                    break;
+                }
+            }
+        } else if (st[2] == 'N' && st[3] == 'P') {
+            for (int i = 1; i < 7; i++) {
+                if (st[1] == allNum[i]) {
+                    C = 40 + i;
+                    F1 = 5;
+                    break;
+                }
+            }
+        }
+    } else if (strcmp(st, "SLA") == 0) {
+        C = 6;
+        F1 = 0;
+    } else if (strcmp(st, "SRA") == 0) {
+        C = 6;
+        F1 = 1;
+    } else if (strcmp(st, "SLAX") == 0) {
+        C = 6;
+        F1 = 2;
+    } else if (strcmp(st, "SRAX") == 0) {
+        C = 6;
+        F1 = 3;
+    } else if (strcmp(st, "SLC") == 0) {
+        C = 6;
+        F1 = 4;
+    } else if (strcmp(st, "SRC") == 0) {
+        C = 6;
+        F1 = 5;
+    } else if (strcmp(st, "NOP") == 0) {
+        C = 0;
+    } else if (strcmp(st, "HLT") == 0) {
+        C = 5;
+        F1 = 2;
+    } else if (strcmp(st, "IN") == 0) {
+        C = 36;
+    } else if (strcmp(st, "OUT") == 0) {
+        C = 37;
+    } else if (strcmp(st, "NUM") == 0) {
+        C = 5;
+        F1 = 0;
+    } else if (strcmp(st, "CHAR") == 0) {
+        C = 5;
+        F1 = 1;
+    }
+
+
+    char address[4];
+    st1 = strtok(NULL, ",");
+    strcpy(address, st1);
+    if (address != NULL) {
+        M1 = 0;
+        for (int j = 0; j < 10; ++j) {
+            if (address[0] == allNum[j]) {
+                M1 += j * 1000;
+                break;
+            }
+        }
+        for (int j = 0; j < 10; ++j) {
+            if (address[1] == allNum[j]) {
+                M1 += j * 100;
+                break;
+            }
+        }
+        for (int j = 0; j < 10; ++j) {
+            if (address[2] == allNum[j]) {
+                M1 += j * 10;
+                break;
+            }
+        }
+        for (int j = 0; j < 10; ++j) {
+            if (address[3] == allNum[j]) {
+                M1 += j;
+                break;
+            }
+        }
+    }
+
+    char I1[2];
+    st1 = strtok(NULL, "(");
+    strcpy(I1, st1);
+    if (I != NULL) {
+        I = 0;
+        for (int j = 0; j < 10; ++j) {
+            if (I1[0] == allNum[j]) {
+                I += j * 10;
+                break;
+            }
+        }
+        for (int j = 0; j < 10; ++j) {
+            if (I1[1] == allNum[j]) {
+                I += j;
+                break;
+            }
         }
     }
 
     int FL = -1;
     int FR = -1;
-    st1 = strtok(NULL, " ");
-    if (st != NULL) {
+    char FLR[4];
+    st1 = strtok(NULL, "(");
+    strcpy(FLR, st1);
+    if (FLR != NULL) {
         for (int i = 0; i < 10; ++i) {
-            if (st[0] == allNum[i]) {
-                M1 = i;
+            if (FLR[0] == allNum[i]) {
+                FL = i;
                 break;
             }
         }
-        if (st[1] == '(' && st[5] == ')') {
-            for (int i = 0; i < 10; ++i) {
-                if (st[2] == allNum[i]) {
-                    FL = i;
-                    break;
-                }
+        for (int i = 0; i < 10; ++i) {
+            if (st[2] == allNum[i]) {
+                FR = i;
+                break;
             }
-            for (int i = 0; i < 10; ++i) {
-                if (st[4] == allNum[i]) {
-                    FR = i;
-                    break;
-                }
-            }
-            if (FL != -1 && FR != -1) {
-                F1 = FL * 8 + FR;
-            } else if (F1 == -1) {
-                F1 = 5;
-            }
+        }
+        if (FL != -1 && FR != -1) {
+            F1 = FL * 8 + FR;
+        } else if (F1 == -1) {
+            F1 = 5;
         }
     }
 }
