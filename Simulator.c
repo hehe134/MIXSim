@@ -14,6 +14,7 @@ static int compare;
 static int current;
 static int C;
 static int F1;
+static int M1;
 
 static Word TapeUnits[8][100];
 static Word DiskOrDrumUnits[8][100];
@@ -530,6 +531,7 @@ static const char allChar[56] = {
         'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
         '.', ',', '(', ')', '+', '-', '*', '/', '=', '$', '<', '>', '@', ';', ':', '\''
 };
+static const char allNum[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 int getIndex(char tc) {
     int index = -1;
@@ -694,9 +696,161 @@ void read() {
     fclose(fp);
 }
 
+void carryOut() {
+    if (C == 8) {
+        LDA(M1, F1);
+    } else if (C > 8 && C < 15) {
+        LDi(C - 8, M1, F1);
+    } else if (C == 15) {
+        LDX(M1, F1);
+    } else if (C == 16) {
+        LDAN(M1, F1);
+    } else if (C == 23) {
+        LDXN(M1, F1);
+    } else if (C > 16 && C < 23) {
+        LDiN(C - 16, M1, F1);
+    } else if (C == 24) {
+        STA(M1, F1);
+    } else if (C == 31) {
+        STX(M1, F1);
+    } else if (C > 24 && C < 31) {
+        STi(C - 24, M1, F1);
+    } else if (C == 32) {
+        STJ(M1, F1);
+    } else if (C == 33) {
+        STZ(M1, F1);
+    } else if (C == 1) {
+        ADD(M1, F1);
+    } else if (C == 2) {
+        SUB(M1, F1);
+    } else if (C == 3) {
+        MUL(M1, F1);
+    } else if (C == 4) {
+        DIV(M1, F1);
+    } else if (C == 48) {
+        if (F1 == 2) ENNA(M1);
+        else if (F1 == 3) ENNA(M1);
+        else if (F1 == 0) INCA(M1);
+        else if (F1 == 1) DECA(M1);
+    } else if (C == 55) {
+        if (F1 == 2) ENTX(M1);
+        else if (F1 == 3) ENNX(M1);
+        else if (F1 == 0) INCX(M1);
+        else if (F1 == 1) DECX(M1);
+    } else if (C > 48 && C < 55) {
+        if (F1 == 2) ENTi(C - 48, M1);
+        else if (F1 == 3) ENNi(C - 48, M1);
+        else if (F1 == 0) INCi(C - 48, M1);
+        else if (F1 == 1) DECi(C - 48, M1);
+    } else if (C == 56) {
+        CMPA(M1, F1);
+    } else if (C == 63) {
+        CMPX(M1, F1);
+    } else if (C > 56 && C < 63) {
+        CMPi(C - 56, M1, F1);
+    } else if (C == 39) {
+        if (F1 == 0) JMP(M1);
+        else if (F1 == 1) JSJ(M1);
+        else if (F1 == 2) JOV(M1);
+        else if (F1 == 3) JNOV(M1);
+        else if (F1 == 4) JL(M1);
+        else if (F1 == 5) JE(M1);
+        else if (F1 == 6) JG(M1);
+        else if (F1 == 7) JGE(M1);
+        else if (F1 == 8) JNE(M1);
+        else if (F1 == 9) JLE(M1);
+    } else if (C == 40) {
+        switch (F1) {
+            case 0:
+                JAN(M1);
+                break;
+            case 1:
+                JAZ(M1);
+                break;
+            case 2:
+                JAP(M1);
+                break;
+            case 3:
+                JANN(M1);
+                break;
+            case 4:
+                JANZ(M1);
+                break;
+            case 5:
+                JANP(M1);
+                break;
+        }
+    } else if (C == 47) {
+        switch (F1) {
+            case 0:
+                JXN(M1);
+                break;
+            case 1:
+                JXZ(M1);
+                break;
+            case 2:
+                JXP(M1);
+                break;
+            case 3:
+                JXNN(M1);
+                break;
+            case 4:
+                JXNZ(M1);
+                break;
+            case 5:
+                JXNP(M1);
+                break;
+        }
+    } else if (C > 40 && C < 47) {
+        switch (F1) {
+            case 0:
+                JiN(C - 40, M1);
+                break;
+            case 1:
+                JiZ(C - 40, M1);
+                break;
+            case 2:
+                JiP(C - 40, M1);
+                break;
+            case 3:
+                JiNN(C - 40, M1);
+                break;
+            case 4:
+                JiNZ(C - 40, M1);
+                break;
+            case 5:
+                JiNP(C - 40, M1);
+        }
+    } else if (C == 6) {
+        switch (F1) {
+            case 0:
+                SLA(M1);
+                break;
+            case 1:
+                SRA(M1);
+                break;
+            case 2:
+                SLAX(M1);
+                break;
+            case 3:
+                SRAX(M1);
+                break;
+            case 4:
+                SLC(M1);
+                break;
+            case 5:
+                SRC(M1);
+                break;
+        }
+    }
+}
+
 void run() {
-    char *st;
-    st = strtok(command[current], " ");
+    char *st1;
+    F1 = -1;
+    st1 = strtok(command[current], " ");
+    char st[6];
+    strcpy(st,st1);
     if (strcmp(st, "LDA") == 0) {
         C = 8;
     } else if (strcmp(st, "LD1") == 0) {
@@ -757,8 +911,6 @@ void run() {
         C = 3;
     } else if (strcmp(st, "DIV") == 0) {
         C = 4;
-    } else if (strcmp(st, "ST1") == 0) {
-        C = 25;
     } else if (st[0] == 'E' && st[1] == 'N') {
         if (st[2] == 'T') {
             if (st[3] == 'A') {
@@ -883,10 +1035,52 @@ void run() {
         } else if (st[3] == '6') {
             C = 62;
         }
-    } else if (strcmp(st, "ST5") == 0) {
-        C = 29;
+    } else if(st[0]=='J'){
+        if (st[2]=='P'){
+            C=39;
+            F1=0;
+        } else if (st[2]=='J'){
+            C=39;
+            F1=1;
+        } else if (st[2]=='V'){
+            C=39;
+            F1=2;
+        }
+    }
+
+    int FL = -1;
+    int FR = -1;
+    st1 = strtok(NULL, " ");
+    if (st != NULL) {
+        for (int i = 0; i < 10; ++i) {
+            if (st[0] == allNum[i]) {
+                M1 = i;
+                break;
+            }
+        }
+        if (st[1] == '(' && st[5] == ')') {
+            for (int i = 0; i < 10; ++i) {
+                if (st[2] == allNum[i]) {
+                    FL = i;
+                    break;
+                }
+            }
+            for (int i = 0; i < 10; ++i) {
+                if (st[4] == allNum[i]) {
+                    FR = i;
+                    break;
+                }
+            }
+            if (FL != -1 && FR != -1) {
+                F1 = FL * 8 + FR;
+            } else if (F1 == -1) {
+                F1 = 5;
+            }
+        }
     }
 }
+
+
 int main(void) {
     Word a;
     a = getWord(87);
