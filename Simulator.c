@@ -1104,30 +1104,6 @@ void run() {
         } else if (strcmp(st, "JXNP") == 0) {
             C = 47;
             F1 = 5;
-        } else if (st[2] == 'N' && st[3] == NULL) {
-            for (int i = 1; i < 7; i++) {
-                if (st[1] == allNum[i]) {
-                    C = 40 + i;
-                    F1 = 0;
-                    break;
-                }
-            }
-        } else if (st[2] == 'Z' && st[3] == NULL) {
-            for (int i = 1; i < 7; i++) {
-                if (st[1] == allNum[i]) {
-                    C = 40 + i;
-                    F1 = 1;
-                    break;
-                }
-            }
-        } else if (st[2] == 'P' && st[3] == NULL) {
-            for (int i = 1; i < 7; i++) {
-                if (st[1] == allNum[i]) {
-                    C = 40 + i;
-                    F1 = 2;
-                    break;
-                }
-            }
         } else if (st[2] == 'N' && st[3] == 'N') {
             for (int i = 1; i < 7; i++) {
                 if (st[1] == allNum[i]) {
@@ -1149,6 +1125,30 @@ void run() {
                 if (st[1] == allNum[i]) {
                     C = 40 + i;
                     F1 = 5;
+                    break;
+                }
+            }
+        } else if (st[2] == 'N') {
+            for (int i = 1; i < 7; i++) {
+                if (st[1] == allNum[i]) {
+                    C = 40 + i;
+                    F1 = 0;
+                    break;
+                }
+            }
+        } else if (st[2] == 'Z') {
+            for (int i = 1; i < 7; i++) {
+                if (st[1] == allNum[i]) {
+                    C = 40 + i;
+                    F1 = 1;
+                    break;
+                }
+            }
+        } else if (st[2] == 'P') {
+            for (int i = 1; i < 7; i++) {
+                if (st[1] == allNum[i]) {
+                    C = 40 + i;
+                    F1 = 2;
                     break;
                 }
             }
@@ -1192,7 +1192,7 @@ void run() {
     char address[4];
     st1 = strtok(NULL, ",");
     strcpy(address, st1);
-    if (address != NULL) {
+    if (st1 != NULL) {
         M1 = 0;
         for (int j = 0; j < 10; ++j) {
             if (address[0] == allNum[j]) {
@@ -1223,7 +1223,7 @@ void run() {
     char I1[2];
     st1 = strtok(NULL, "(");
     strcpy(I1, st1);
-    if (I != NULL) {
+    if (st1 != NULL) {
         I = 0;
         for (int j = 0; j < 10; ++j) {
             if (I1[0] == allNum[j]) {
@@ -1244,7 +1244,7 @@ void run() {
     char FLR[4];
     st1 = strtok(NULL, "(");
     strcpy(FLR, st1);
-    if (FLR != NULL) {
+    if (st1 != NULL) {
         for (int i = 0; i < 10; ++i) {
             if (FLR[0] == allNum[i]) {
                 FL = i;
