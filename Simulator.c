@@ -100,7 +100,7 @@ void save(Word x, int M, int F) {
         memory[M].myBool = x.myBool;
         L++;
     }
-    for (int i = L - 1; i < R - 1; i++) {
+    for (int i = L - 1; i < R ; i++) {
         memory[M].a[i] = x.a[i];
     }
 }
@@ -559,18 +559,22 @@ void output(Word w) {
 }
 
 void printWord(Word w) {
-    char c[11] = "";
-    if (w.myBool == 0) strcat(c, "-");
+    char c[20] = "";
+    if (w.myBool == 0) strcat(c, "- ");
     else
-        strcat(c, "+");
-    char c1[2];
+        strcat(c, "+ ");
+    char c1[3];
     for (int i = 0; i < 5; i++) {
-        if (w.a[i] < 10) { strcat(c, "0"); }
-        c1[0] = w.a[i];
-        c1[1] = '\0';
+      //  if (w.a[i] < 10) { strcat(c, "0"); }
+       // c1[0] = w.a[i];
+       // c1[1] = '\0';
+       c1[0]=allNum[w.a[i]/10];
+       c1[1]=allNum[w.a[i]%10];
+       c1[2]='\0';
         strcat(c, c1);
-
+        strcat(c, " ");
     }
+    printf("%s\n", c);
 }
 
 int sizeOfDeivice(int F) {
@@ -731,7 +735,7 @@ void carryOut() {
     } else if (C == 4) {
         DIV(M1, F1);
     } else if (C == 48) {
-        if (F1 == 2) ENNA(M1);
+        if (F1 == 2) ENTA(M1);
         else if (F1 == 3) ENNA(M1);
         else if (F1 == 0) INCA(M1);
         else if (F1 == 1) DECA(M1);
@@ -1279,10 +1283,35 @@ void run() {
 
 int main(void) {
 
+    reset(&rA);
+    reset(&rX);
+
+    for (int j = 0; j < 4000; ++j) {
+        memory[j].myBool = 1;
+        for (int i = 0; i < 5; ++i) {
+            memory[j].a[i] = 0;
+        }
+    }
     read();
+
+    printf("\n");
     while (boolHLT == 0) {
         run();
         carryOut();
+        printf("rA: ");
 
+        if (rA.myBool==0) printf("- ");
+        else printf("+ ");
+        for (int i = 0; i < 5; ++i) {
+            printf("%d ", rA.a[i]);
+        }
+        printf("\n");
+        printf("rX: ");
+        if (rA.myBool==0) printf("- ");
+        else printf("+ ");
+        for (int i = 0; i < 5; ++i) {
+            printf("%d ", rX.a[i]);
+        }
+        printf("\n");
     }
 }
