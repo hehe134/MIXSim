@@ -27,28 +27,28 @@ static char LinePrinter[24][5];
 static char Typewriter[14][5];
 static char PaperTape[14][5];
 
-void load(Word x, int M, int F) {
-    reset(&x);
+void load(Word *x, int M, int F) {
+    reset(x);
     int L = F / 8;
     int R = F % 8;
     int L1 = L;
     if (L == 0) {
-        x.myBool = memory[M].myBool;
+        (*x).myBool = memory[M].myBool;
         L1 = 1;
     }
     if (R > 0) {
         for (int i = R - 1, j = 4; i >= L1 - 1; i--, j--) {
-            x.a[j] = memory[M].a[i];
+            (*x).a[j] = memory[M].a[i];
         }
     }
 }
 
 void LDA(int M, int F) {
-    load(rA, M, F);
+    load(&rA, M, F);
 }
 
 void LDX(int M, int F) {
-    load(rX, M, F);
+    load(&rX, M, F);
 }
 
 void LDi(int i, int M, int F) {
@@ -60,7 +60,7 @@ void LDi(int i, int M, int F) {
             return;
         }
     }
-    load(rI[i], M, F);
+    load(&rI[i], M, F);
 }
 
 void LDAN(int M, int F) {
@@ -100,7 +100,7 @@ void save(Word x, int M, int F) {
         memory[M].myBool = x.myBool;
         L++;
     }
-    for (int i = L - 1; i < R ; i++) {
+    for (int i = L - 1; i < R; i++) {
         memory[M].a[i] = x.a[i];
     }
 }
@@ -272,11 +272,12 @@ void CMPi(int i, int M, int F) {
 
 void JMP(int M) {
     rJ = getWord(current + 1);
-    current = M;
+    current = M - 1;
+    printf("\n%d\n", current);
 }
 
 void JSJ(int M) {
-    current = M;
+    current = M - 1;
 }
 
 void JOV(int M) {
@@ -527,6 +528,14 @@ void SRC(int M) {
     }
 }
 
+void MOVE(int M, int F) {
+    int j = getValue_Word(rI[1]);
+    for (int i = M; i < M + F; i++) {
+        save(memory[i], j, 5);
+        j++;
+    }
+}
+
 static const char allChar[56] = {
         ' ', 'A', 'B', 'C', 'D', 'E',
         'F', 'G', 'H', 'I', ' ', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
@@ -565,12 +574,12 @@ void printWord(Word w) {
         strcat(c, "+ ");
     char c1[3];
     for (int i = 0; i < 5; i++) {
-      //  if (w.a[i] < 10) { strcat(c, "0"); }
-       // c1[0] = w.a[i];
-       // c1[1] = '\0';
-       c1[0]=allNum[w.a[i]/10];
-       c1[1]=allNum[w.a[i]%10];
-       c1[2]='\0';
+        //  if (w.a[i] < 10) { strcat(c, "0"); }
+        // c1[0] = w.a[i];
+        // c1[1] = '\0';
+        c1[0] = allNum[w.a[i] / 10];
+        c1[1] = allNum[w.a[i] % 10];
+        c1[2] = '\0';
         strcat(c, c1);
         strcat(c, " ");
     }
@@ -855,6 +864,8 @@ void carryOut() {
         IN(M1, F1);
     } else if (C == 37) {
         OUT(M1, F1);
+    } else if (C == 7) {
+        MOVE(M1, F1);
     }
     current++;
 
@@ -863,7 +874,9 @@ void carryOut() {
 void run() {
     char *st1;
     F1 = -1;
-    st1 = strtok(command[current], " ");
+    char stn[50];
+    strcpy(stn,command[current]);
+    st1 = strtok(stn, " ");
     char st[6];
     strcpy(st, st1);
     if (strcmp(st, "LDA") == 0) {
@@ -1199,6 +1212,8 @@ void run() {
     } else if (strcmp(st, "CHAR") == 0) {
         C = 5;
         F1 = 1;
+    } else if (strcmp(st, "MOVE") == 0) {
+        C = 7;
     }
 
 
@@ -1274,31 +1289,43 @@ void run() {
         }
         if (FL != -1 && FR != -1) {
             F1 = FL * 8 + FR;
-        } else if (F1 == -1) {
-            F1 = 5;
         }
     }
+    if (F1 == -1) {
+        F1 = 5;
+    }
+
 }
+    int main(void) {
 
+        reset(&rA);
+        reset(&rX);
 
-int main(void) {
-
-    reset(&rA);
-    reset(&rX);
-
-    for (int j = 0; j < 4000; ++j) {
-        memory[j].myBool = 1;
-        for (int i = 0; i < 5; ++i) {
-            memory[j].a[i] = 0;
+        for (int j = 0; j < 4000; ++j) {
+            memory[j].myBool = 1;
+            for (int i = 0; i < 5; ++i) {
+                memory[j].a[i] = 0;
+            }
         }
-    }
-    read();
+        read();
 
-    printf("\n");
-    while (boolHLT == 0) {
-        run();
-        carryOut();
-        printf("rA: ");
+        printf("\n");
+        while (boolHLT == 0) {
+            printf("\n%s", command[current]);
+            printf("\ncompare: %d\n", compare);
+            run();
+            carryOut();
+        printf("\n%d,1001: ",current);
+        for (int i = 0; i < 5; ++i) {
+            printf("%d ", memory[1001].a[i]);
+        }
+        printf("\nrA: ");
+
+        printf("\n%d,1002: ",current);
+        for (int i = 0; i < 5; ++i) {
+            printf("%d ", memory[1002].a[i]);
+        }
+        printf("\nrA: ");
 
         if (rA.myBool==0) printf("- ");
         else printf("+ ");
@@ -1313,5 +1340,5 @@ int main(void) {
             printf("%d ", rX.a[i]);
         }
         printf("\n");
+        }
     }
-}

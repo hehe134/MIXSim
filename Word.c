@@ -19,7 +19,7 @@ Word newWord(int a0, int a1, int a2, int a3, int a4, int a5) {
 int getValue_Word(Word myWord) {
     int v = 0;
     for (int i = 0; i < 5; i++) {
-        v += ((int) pow(64, i)) * myWord.a[i];
+        v += ((int) pow(64, 4-i)) * myWord.a[i];
     }
     if (myWord.myBool == 1) {
         return v;
