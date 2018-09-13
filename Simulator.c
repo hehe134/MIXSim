@@ -671,7 +671,7 @@ void NUM() {
     rA.myBool = flag;
 }
 
-const int row() {
+int row() {
     FILE *fp;
     int flag = 0, file_row = 0, count = 0;
     if ((fp = fopen("input.txt", "r")) == NULL)
@@ -693,7 +693,7 @@ static char command[500][50];
 void read() {
 
     char szTest[50] = {0};
-    int len = 0;
+//    int len = 0;
 
     FILE *fp = fopen("input.txt", "r");
     if (NULL == fp) {
@@ -875,7 +875,7 @@ void run() {
     char *st1;
     F1 = -1;
     char stn[50];
-    strcpy(stn,command[current]);
+    strcpy(stn, command[current]);
     st1 = strtok(stn, " ");
     char st[6];
     strcpy(st, st1);
@@ -1296,49 +1296,50 @@ void run() {
     }
 
 }
-    int main(void) {
 
-        reset(&rA);
-        reset(&rX);
+int main(void) {
 
-        for (int j = 0; j < 4000; ++j) {
-            memory[j].myBool = 1;
-            for (int i = 0; i < 5; ++i) {
-                memory[j].a[i] = 0;
-            }
+    reset(&rA);
+    reset(&rX);
+
+    for (int j = 0; j < 4000; ++j) {
+        memory[j].myBool = 1;
+        for (int i = 0; i < 5; ++i) {
+            memory[j].a[i] = 0;
         }
-        read();
+    }
+    read();
 
-        printf("\n");
-        while (boolHLT == 0) {
-            printf("\n%s", command[current]);
-            printf("\ncompare: %d\n", compare);
-            run();
-            carryOut();
-        printf("\n%d,1001: ",current);
+    printf("\n");
+    while (boolHLT == 0) {
+        printf("\n%s", command[current]);
+        printf("\ncompare: %d\n", compare);
+        run();
+        carryOut();
+        printf("\n%d,1001: ", current);
         for (int i = 0; i < 5; ++i) {
             printf("%d ", memory[1001].a[i]);
         }
         printf("\nrA: ");
 
-        printf("\n%d,1002: ",current);
+        printf("\n%d,1002: ", current);
         for (int i = 0; i < 5; ++i) {
             printf("%d ", memory[1002].a[i]);
         }
         printf("\nrA: ");
 
-        if (rA.myBool==0) printf("- ");
+        if (rA.myBool == 0) printf("- ");
         else printf("+ ");
         for (int i = 0; i < 5; ++i) {
             printf("%d ", rA.a[i]);
         }
         printf("\n");
         printf("rX: ");
-        if (rA.myBool==0) printf("- ");
+        if (rA.myBool == 0) printf("- ");
         else printf("+ ");
         for (int i = 0; i < 5; ++i) {
             printf("%d ", rX.a[i]);
         }
         printf("\n");
-        }
     }
+}
